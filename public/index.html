@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guitar Tuner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>Guitar Tuner</h1>
+
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button id="tab-btn-tuner" class="tab" type="button" role="tab" aria-selected="true" aria-controls="tab-tuner">Tuner</button>
+      <button id="tab-btn-chords" class="tab" type="button" role="tab" aria-selected="false" aria-controls="tab-chords" tabindex="-1">Chords</button>
+    </div>
+
+    <section id="tab-tuner" role="tabpanel" aria-labelledby="tab-btn-tuner">
+      <div class="controls">
+        <label>Tuning
+          <select id="tuning"></select>
+        </label>
+        <label>Volume
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.6">
+        </label>
+        <button id="stop" type="button">Stop</button>
+      </div>
+
+      <canvas id="neck" width="960" height="320" aria-label="Guitar neck. Click a string to pluck it and loop its tone."></canvas>
+
+      <p id="status" class="status" role="status" aria-live="polite">Click a string to hear it. Click it again to stop.</p>
+
+      <div id="strings" class="strings" role="group" aria-label="Strings"></div>
+
+      <section class="panel" aria-labelledby="tuner-title">
+        <h2 id="tuner-title">Tuning meter (microphone)</h2>
+        <p class="hint">Play a string near the microphone. The meter shows the nearest string of the selected tuning and whether it is sharp or flat. Audio stays on this device.</p>
+        <div class="controls">
+          <button id="mic-toggle" type="button">Start microphone</button>
+        </div>
+        <div class="meter" id="meter" aria-hidden="true">
+          <div class="meter-scale"><span>Flat</span><span>In tune</span><span>Sharp</span></div>
+          <div class="meter-track"><div class="meter-center"></div><div class="meter-needle" id="meter-needle"></div></div>
+        </div>
+        <p id="meter-readout" class="status" role="status" aria-live="polite">Microphone is off.</p>
+      </section>
+
+      <details class="panel" id="custom-panel">
+        <summary>Custom tuning editor</summary>
+        <p class="hint">Enter the note for each string, lowest first, using a letter, optional # or b, and an octave number (for example E2, F#3, Bb1). Saved in this browser only.</p>
+        <div class="controls">
+          <label>Strings
+            <select id="custom-count"></select>
+          </label>
+        </div>
+        <form id="custom-form" class="custom-form">
+          <div id="custom-inputs" class="custom-inputs"></div>
+          <div class="controls">
+            <button id="custom-save" type="submit">Save and use</button>
+            <button id="custom-clear" type="button">Delete saved tuning</button>
+          </div>
+          <p id="custom-error" class="error" role="alert"></p>
+        </form>
+      </details>
+
+      <p class="hint">Keyboard: keys 1-6 act like clicking strings from lowest to highest. Left and Right arrows move to the previous or next note and loop it. Esc or Space stops.</p>
+    </section>
+
+    <section id="tab-chords" role="tabpanel" aria-labelledby="tab-btn-chords" hidden>
+      <h2 class="section-title">Common chords</h2>
+      <p class="hint">Open shapes in standard tuning (E A D G B E). An x under the diagram means the string is not played, and o means open. Play strums the chord through your speakers.</p>
+      <div class="controls">
+        <label>Capo
+          <select id="capo"></select>
+        </label>
+        <span id="capo-note" class="hint"></span>
+      </div>
+      <div id="chord-grid" class="chord-grid"></div>
+
+      <h2 class="section-title">Chord progressions</h2>
+      <p class="hint">Pick a key and a progression to see its chords. Roman numerals are the chords of the key: upper case is major, lower case is minor. The key is the sound you hear, so with a capo the diagrams show the shape to finger.</p>
+      <div class="controls">
+        <label>Key
+          <select id="prog-key"></select>
+        </label>
+        <label>Progression
+          <select id="prog-select"></select>
+        </label>
+        <button id="prog-play" type="button">Play progression</button>
+      </div>
+      <p id="prog-note" class="hint"></p>
+      <div id="prog-chords" class="chord-grid"></div>
+      <p id="prog-status" class="status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+  <script src="tunings.js"></script>
+  <script src="pitch.js"></script>
+  <script src="chords.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
