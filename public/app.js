@@ -591,6 +591,8 @@
   let progList = [];   // chords of the shown progression
   let progTimers = [];
   let capo = 0;        // capo fret, 0 for none
+  const rootTabs = document.getElementById('root-tabs');
+  let root = 0;        // chord root note shown in the grid, 0 for C .. 11 for B
 
   // SVG fret diagram. `frets` are the physical frets (already moved up by the
   // capo), so the neck drawn is the one you see. With a capo the capo is drawn
@@ -692,9 +694,32 @@
 
   function buildChordCards() {
     chordGrid.innerHTML = '';
-    Chords.CHORDS.forEach((shape) => {
+    Chords.chordsForRoot(root).forEach((shape) => {
       chordGrid.appendChild(makeChordCard(Chords.gridChord(shape, capo), null));
     });
+  }
+
+  function setRoot(value) {
+    root = value;
+    Array.from(rootTabs.children).forEach((btn, i) => {
+      btn.setAttribute('aria-selected', i === root ? 'true' : 'false');
+      btn.tabIndex = i === root ? 0 : -1;
+    });
+    buildChordCards();
+  }
+
+  function buildRootTabs() {
+    rootTabs.innerHTML = '';
+    Chords.NOTE_NAMES.forEach((name, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('role', 'tab');
+      btn.textContent = label(name);
+      btn.setAttribute('aria-label', 'Chords on ' + label(name));
+      btn.addEventListener('click', () => setRoot(i));
+      rootTabs.appendChild(btn);
+    });
+    setRoot(root);
   }
 
   function currentProgression() {
@@ -770,7 +795,7 @@
   }
 
   buildCapoControl();
-  buildChordCards();
+  buildRootTabs();
   buildProgressionControls();
 
   // ---- Start -------------------------------------------------------------

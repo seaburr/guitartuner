@@ -63,6 +63,84 @@
     return { degree: NUMERALS[upper], minor: numeral === numeral.toLowerCase() };
   }
 
+  // ---- Chords by root note (the per-note tabs) ----------------------------
+  // Movable shapes. Each is written with its root on one string at fret 0.
+  // Placed at fret f, every fretted note moves up f frets, so the same shape
+  // gives the chord on any root. OPEN_SEMI is the open note of each string.
+  const OPEN_SEMI = [4, 9, 2, 7, 11, 4]; // E A D G B E, lowest string first
+  const TYPE_SUFFIXES = ['', 'm', '7', 'm7', 'maj7', 'sus2', 'sus4'];
+  const MOVABLE = [
+    { string: 0, shapes: {
+      '': [0, 2, 2, 1, 0, 0], m: [0, 2, 2, 0, 0, 0], '7': [0, 2, 0, 1, 0, 0], m7: [0, 2, 0, 0, 0, 0],
+      maj7: [0, 2, 1, 1, 0, 0], sus2: [0, 2, 4, 4, 0, 0], sus4: [0, 2, 2, 2, 0, 0] } },
+    { string: 1, shapes: {
+      '': [null, 0, 2, 2, 2, 0], m: [null, 0, 2, 2, 1, 0], '7': [null, 0, 2, 0, 2, 0], m7: [null, 0, 2, 0, 1, 0],
+      maj7: [null, 0, 2, 1, 2, 0], sus2: [null, 0, 2, 2, 0, 0], sus4: [null, 0, 2, 2, 3, 0] } },
+    { string: 2, shapes: {
+      '': [null, null, 0, 2, 3, 2], m: [null, null, 0, 2, 3, 1], '7': [null, null, 0, 2, 1, 2],
+      m7: [null, null, 0, 2, 1, 1], maj7: [null, null, 0, 2, 2, 2], sus2: [null, null, 0, 2, 3, 0],
+      sus4: [null, null, 0, 2, 3, 3] } },
+  ];
+
+  // Slash chords: the bass note is the one after the slash.
+  const SLASH_CHORDS = [
+    { name: 'E/A', frets: [null, 0, 2, 1, 0, 0] },
+    { name: 'E/G#', frets: [4, 2, 2, 1, 0, 0] },
+    { name: 'Am/G', frets: [3, null, 2, 2, 1, 0] },
+    { name: 'C/E', frets: [0, 3, 2, 0, 1, 0] },
+    { name: 'C/G', frets: [3, 3, 2, 0, 1, 0] },
+    { name: 'D/A', frets: [null, 0, 0, 2, 3, 2] },
+    { name: 'D/F#', frets: [2, null, 0, 2, 3, 2] },
+    { name: 'G/B', frets: [null, 2, 0, 0, 3, 3] },
+    { name: 'A/C#', frets: [null, 4, 2, 2, 2, 0] },
+  ];
+
+  // Lowest fretted position of a shape (0 for an all-open shape).
+  function lowestFret(frets) {
+    const fretted = frets.filter((f) => f !== null && f > 0);
+    return fretted.length ? Math.min(...fretted) : 0;
+  }
+
+  // For every root and chord type, the shape nearest the top of the neck:
+  // a curated open shape if there is one, otherwise the movable shape that
+  // sits lowest. Ties go to the curated shape.
+  function buildLibrary() {
+    const out = [];
+    for (let root = 0; root < 12; root++) {
+      TYPE_SUFFIXES.forEach((suffix) => {
+        const candidates = [];
+        CHORDS.forEach((c) => {
+          const p = splitName(c.name);
+          if (p && p.root === root && p.suffix === suffix) candidates.push(c.frets);
+        });
+        MOVABLE.forEach((family) => {
+          const shape = family.shapes[suffix];
+          if (!shape) return;
+          const f = (root - OPEN_SEMI[family.string] + 12) % 12;
+          candidates.push(shape.map((x) => (x === null ? null : x + f)));
+        });
+        if (!candidates.length) return;
+        let best = candidates[0];
+        candidates.forEach((c) => { if (lowestFret(c) < lowestFret(best)) best = c; });
+        out.push({ name: NOTE_NAMES[root] + suffix, root: root, frets: best });
+      });
+    }
+    return out;
+  }
+
+  const LIBRARY = buildLibrary();
+
+  // Every chord with the given root note (0 for C .. 11 for B): the seven
+  // chord types, then any slash chords on that root. Each is {name, frets}.
+  function chordsForRoot(root) {
+    const r = ((root % 12) + 12) % 12;
+    const types = LIBRARY.filter((c) => c.root === r).map((c) => ({ name: c.name, frets: c.frets }));
+    const slash = SLASH_CHORDS
+      .filter((c) => splitName(c.name.split('/')[0]).root === r)
+      .map((c) => ({ name: c.name, frets: c.frets }));
+    return types.concat(slash);
+  }
+
   // Capo: a number 0..12. Returns the capo fret or throws if it is not one.
   function checkCapo(capo) {
     const c = capo === undefined || capo === null ? 0 : Number(capo);
@@ -70,15 +148,25 @@
     return c;
   }
 
-  // Moves a chord name up (positive) or down (negative) by semitones.
-  // "Am" up 2 is "Bm", "F#7" up 1 is "G7". Returns the name unchanged if unparsable.
-  function transposeName(name, semitones) {
+  // Splits "F#m7" into {root: 6, suffix: 'm7'}. Returns null if it is not a chord name.
+  function splitName(name) {
     const m = /^([A-G]#?)(.*)$/.exec(name);
-    if (!m) return name;
+    if (!m) return null;
     const idx = NOTE_NAMES.indexOf(m[1]);
-    if (idx < 0) return name;
-    const root = (((idx + semitones) % 12) + 12) % 12;
-    return NOTE_NAMES[root] + m[2];
+    return idx < 0 ? null : { root: idx, suffix: m[2] };
+  }
+
+  // Moves a chord name up (positive) or down (negative) by semitones.
+  // "Am" up 2 is "Bm", "F#7" up 1 is "G7", "E/A" up 2 is "F#/B".
+  // Returns the name unchanged if it cannot be parsed.
+  function transposeName(name, semitones) {
+    if (name.indexOf('/') >= 0) {
+      return name.split('/').map((part) => transposeName(part, semitones)).join('/');
+    }
+    const p = splitName(name);
+    if (!p) return name;
+    const root = (((p.root + semitones) % 12) + 12) % 12;
+    return NOTE_NAMES[root] + p.suffix;
   }
 
   // Physical frets when a shape is played with a capo: every fretted note moves
@@ -104,7 +192,9 @@
     if (!parsed) throw new Error('Unknown numeral: ' + numeral);
     const c = checkCapo(capo);
     const root = (keyRoot + MAJOR_STEPS[parsed.degree]) % 12;
-    const name = NOTE_NAMES[root] + (parsed.minor ? 'm' : '');
+    // The seventh degree in major is diminished (vii), not minor.
+    const suffix = parsed.minor ? (parsed.degree === 6 ? 'dim' : 'm') : '';
+    const name = NOTE_NAMES[root] + suffix;
     const shape = findChord(transposeName(name, -c));
     return {
       numeral: numeral,
@@ -133,6 +223,9 @@
     CHORDS,
     PROGRESSIONS,
     findChord,
+    chordsForRoot,
+    SLASH_CHORDS,
+    LIBRARY,
     parseNumeral,
     checkCapo,
     transposeName,

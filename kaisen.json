@@ -1,4 +1,5 @@
 {
   "runtime": "static",
-  "health": "/"
+  "health": "/",
+  "test": "node --test"
 }

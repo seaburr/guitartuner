@@ -23,8 +23,10 @@ through the microphone to show whether a string is sharp or flat.
 
 Switch to the "Chords" tab for:
 
-- Common chord diagrams (16 open and near-open shapes in standard tuning: C, D, E, F, G, A, B,
-  Am, Bm, Dm, Em, and the 7th chords C7, D7, E7, G7, A7). Each has a Play button that strums it.
+- Chords by note: 12 note tabs (C to B). Each tab lists the chords on that note: major, minor (m),
+  7, m7, maj7, sus2 and sus4, plus slash chords with that note on top (E/A, E/G#, C/G, D/F# and others).
+  Open shapes are used where they exist; elsewhere the lowest barre shape on the neck is shown.
+  Each chord has a Play button that strums it.
 - Chord progressions in any of the 12 keys: Pop (I V vi IV), Doo-wop (I vi IV V),
   Four chords (I IV V I), Circle (I vi ii V) and Turnaround (ii V I). The chords are worked out
   from the key, upper-case numerals are major and lower-case are minor. "Play progression"

@@ -117,3 +117,68 @@ test('strum frequencies: fret raises pitch by semitones, muted gives null', () =
   assert.ok(Math.abs(freqs[2] - open[2] * Math.pow(2, 2 / 12)) < 1e-9);
   assert.ok(Math.abs(freqs[4] - open[4] * Math.pow(2, 1 / 12)) < 1e-9);
 });
+
+test('every note has seven chord types, each with six strings in a playable range', () => {
+  const types = ['', 'm', '7', 'm7', 'maj7', 'sus2', 'sus4'];
+  for (let root = 0; root < 12; root++) {
+    const list = Chords.chordsForRoot(root);
+    const base = Chords.NOTE_NAMES[root];
+    for (const suffix of types) {
+      const found = list.find((c) => c.name === base + suffix);
+      assert.ok(found, base + suffix + ' is in the tab for ' + base);
+      assert.strictEqual(found.frets.length, 6, found.name);
+      const played = found.frets.filter((f) => f !== null);
+      assert.ok(played.length >= 3, found.name + ' needs at least 3 strings');
+      for (const f of played) assert.ok(Number.isInteger(f) && f >= 0 && f <= 12, found.name + ' fret ' + f);
+    }
+    const names = list.map((c) => c.name);
+    assert.strictEqual(new Set(names).size, names.length, 'unique names for ' + base);
+  }
+});
+
+test('a tab only lists chords with its own root', () => {
+  for (let root = 0; root < 12; root++) {
+    for (const c of Chords.chordsForRoot(root)) {
+      const rootName = c.name.split('/')[0].match(/^[A-G]#?/)[0];
+      assert.strictEqual(Chords.NOTE_NAMES.indexOf(rootName), root, c.name);
+    }
+  }
+});
+
+test('open shapes are used where they exist, barre shapes elsewhere', () => {
+  const shape = (root, name) => Chords.chordsForRoot(root).find((c) => c.name === name).frets;
+  assert.deepStrictEqual(shape(0, 'C'), [null, 3, 2, 0, 1, 0]);
+  assert.deepStrictEqual(shape(0, 'C7'), [null, 3, 2, 3, 1, 0]);
+  assert.deepStrictEqual(shape(9, 'Am'), [null, 0, 2, 2, 1, 0]);
+  assert.deepStrictEqual(shape(9, 'Asus4'), [null, 0, 2, 2, 3, 0]);
+  assert.deepStrictEqual(shape(2, 'Dsus2'), [null, null, 0, 2, 3, 0]);
+  assert.deepStrictEqual(shape(4, 'Esus2'), [0, 2, 4, 4, 0, 0]);
+  // Cm has no open shape: the A shape barred at fret 3 is the lowest.
+  assert.deepStrictEqual(shape(0, 'Cm'), [null, 3, 5, 5, 4, 3]);
+  // Cmaj7 and Csus2 are barres at fret 3 too.
+  assert.deepStrictEqual(shape(0, 'Cmaj7'), [null, 3, 5, 4, 5, 3]);
+  assert.deepStrictEqual(shape(0, 'Csus2'), [null, 3, 5, 5, 3, 3]);
+});
+
+test('slash chords sit under their top note with the bass note in the name', () => {
+  const e = Chords.chordsForRoot(4).map((c) => c.name);
+  assert.ok(e.includes('E/A'));
+  assert.ok(e.includes('E/G#'));
+  assert.ok(Chords.chordsForRoot(9).map((c) => c.name).includes('Am/G'));
+  const ea = Chords.SLASH_CHORDS.find((c) => c.name === 'E/A');
+  assert.deepStrictEqual(ea.frets, [null, 0, 2, 1, 0, 0]);
+});
+
+test('transposeName moves both notes of a slash chord', () => {
+  assert.strictEqual(Chords.transposeName('E/A', 2), 'F#/B');
+  assert.strictEqual(Chords.transposeName('Am/G', 2), 'Bm/A');
+});
+
+test('a tab with a capo shows sounding names and fingered shapes', () => {
+  const got = Chords.gridChord(Chords.chordsForRoot(0).find((c) => c.name === 'C'), 2);
+  assert.strictEqual(got.name, 'D');
+  assert.strictEqual(got.shape, 'C');
+  const slash = Chords.gridChord(Chords.SLASH_CHORDS.find((c) => c.name === 'E/A'), 2);
+  assert.strictEqual(slash.name, 'F#/B');
+});
+

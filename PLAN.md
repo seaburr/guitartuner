@@ -28,7 +28,21 @@ Round 5 (feedback: capo selector that transposes shapes and names):
 - [x] deploy_preview, http_request checks
 - [x] finish
 
-Capo model: name = sounding (shape moved up by capo), frets = physical (fretted +capo, open -> capo).
+Round 6 (feedback: more common chords, a tab per note):
+- [x] chords.js: MOVABLE shapes (E, A, D families) per root, curated open shapes win ties, SLASH_CHORDS, chordsForRoot(root)
+- [x] transposeName handles slash chords
+- [x] index.html: root-tabs row (C..B), chord grid follows the tab
+- [x] app.js: buildRootTabs, setRoot, buildChordCards uses chordsForRoot
+- [x] tests/chords.test.js: per-root coverage, open vs barre choice, slash chords, capo on slash
+- [x] README updated
+- [x] kaisen.json "test": "node --test" (tests now run on deploy; 37 pass)
+- [x] fixed vii chord naming (Bdim, no shape) which broke an existing test
+- [x] deploy_preview (TESTS PASSED), http_request checks on /, /chords.js, /app.js
+- [x] finish
+
+Progressions still use CHORDS only (findChord), so F#m with capo 3 stays skipped (existing test).
+
+Capo model: name = sounding name (shape moved up by capo), frets = physical (fretted +capo, open -> capo).
 Progressions: key is the sounding key; shape = name moved down by capo.
 
 Notes: "DADGAG" read as DADGAD. Mic needs a user click (getUserMedia on https).
