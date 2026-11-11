@@ -40,6 +40,13 @@ Round 6 (feedback: more common chords, a tab per note):
 - [x] deploy_preview (TESTS PASSED), http_request checks on /, /chords.js, /app.js
 - [x] finish
 
+Round 7 (feedback: more tunings, desert rock / stoner metal, DGDGDG):
+- [x] tunings.js: dgdgdg, double-drop-d, drop-c-sharp, drop-b, drop-a presets
+- [x] tests/tunings.test.js: notes for each new preset, range check
+- [x] README tunings list
+- [x] deploy_preview (TESTS PASSED, 40 tests), http_request check of /tunings.js (200, new presets served)
+- [x] finish
+
 Progressions still use CHORDS only (findChord), so F#m with capo 3 stays skipped (existing test).
 
 Capo model: name = sounding name (shape moved up by capo), frets = physical (fretted +capo, open -> capo).

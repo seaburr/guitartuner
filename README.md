@@ -14,6 +14,8 @@ through the microphone to show whether a string is sharp or flat.
 
 - Guitar (6-string): Standard (EADGBE), Drop D, half step down, Eb standard, full step down,
   Drop C, DADGAD, D-G-C-G-C-D, Open G, Open D.
+- Guitar, desert rock and stoner/metal: DGDGDG (D2 G2 D3 G3 D4 G4), double drop D (DADGBD),
+  drop C# (C#F#BEG#C#), drop B (BF#BEG#C#), drop A (AEADF#B).
 - Bass (4-string): standard EADG, drop D (DADG).
 - Ukulele: standard GCEA (re-entrant, G is the high string), low G (G3 C4 E4 A4).
 - Banjo (5-string): open G (gDGBD), double C (gCGBD).

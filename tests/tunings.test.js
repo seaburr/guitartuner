@@ -61,6 +61,35 @@ test('standard and drop D differ only in the low string', () => {
   assert.strictEqual(dd[0], 'D2');
 });
 
+test('desert rock and stoner metal presets are present with the right notes', () => {
+  const expected = {
+    'dgdgdg': ['D2', 'G2', 'D3', 'G3', 'D4', 'G4'],
+    'double-drop-d': ['D2', 'A2', 'D3', 'G3', 'B3', 'D4'],
+    'drop-c-sharp': ['C#1', 'F#1', 'B1', 'E2', 'G#2', 'C#3'],
+    'drop-b': ['B1', 'F#2', 'B2', 'E3', 'G#3', 'C#4'],
+    'drop-a': ['A1', 'E2', 'A2', 'D3', 'F#3', 'B3'],
+  };
+  for (const id of Object.keys(expected)) {
+    const t = Tunings.getTuning(id);
+    assert.strictEqual(t.id, id, 'missing ' + id);
+    assert.strictEqual(t.instrument, 'guitar', id);
+    assert.deepStrictEqual(t.notes, expected[id], id);
+  }
+});
+
+test('DGDGDG is tuned D G D G D G, low to high', () => {
+  const names = Tunings.getTuning('dgdgdg').notes.map((n) => n.replace(/\d/g, ''));
+  assert.deepStrictEqual(names, ['D', 'G', 'D', 'G', 'D', 'G']);
+});
+
+test('every new preset is inside the supported range and within 6 strings', () => {
+  for (const id of ['dgdgdg', 'double-drop-d', 'drop-c-sharp', 'drop-b', 'drop-a']) {
+    const t = Tunings.getTuning(id);
+    assert.ok(t.notes.length >= Tunings.MIN_STRINGS && t.notes.length <= Tunings.MAX_STRINGS, id);
+    assert.strictEqual(Tunings.validateNotes(t.notes), null, id);
+  }
+});
+
 test('unknown tuning id falls back to standard', () => {
   assert.strictEqual(Tunings.getTuning('nope').id, 'standard');
 });
