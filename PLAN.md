@@ -47,6 +47,13 @@ Round 7 (feedback: more tunings, desert rock / stoner metal, DGDGDG):
 - [x] deploy_preview (TESTS PASSED, 40 tests), http_request check of /tunings.js (200, new presets served)
 - [x] finish
 
+Round 8 (feedback: add Ggdgdd, the QOTSA tuning):
+- [x] tunings.js: ggdgdd preset (G2 G2 D3 G3 D4 D4, as typed)
+- [x] tests/tunings.test.js: ggdgdd test
+- [x] README tunings list and assumption
+- [x] deploy_preview (TESTS PASSED, 41 tests), http_request check of /tunings.js (200)
+- [x] finish
+
 Progressions still use CHORDS only (findChord), so F#m with capo 3 stays skipped (existing test).
 
 Capo model: name = sounding name (shape moved up by capo), frets = physical (fretted +capo, open -> capo).

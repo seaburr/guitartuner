@@ -45,6 +45,7 @@
     { id: 'open-d', instrument: 'guitar', name: 'Open D (DADF#AD)', notes: ['D2', 'A2', 'D3', 'F#3', 'A3', 'D4'] },
     { id: 'dgdgdg', instrument: 'guitar', name: 'DGDGDG (all open G fifths)', notes: ['D2', 'G2', 'D3', 'G3', 'D4', 'G4'] },
     { id: 'double-drop-d', instrument: 'guitar', name: 'Double drop D (DADGBD)', notes: ['D2', 'A2', 'D3', 'G3', 'B3', 'D4'] },
+    { id: 'ggdgdd', instrument: 'guitar', name: 'Ggdgdd (QOTSA)', notes: ['G2', 'G2', 'D3', 'G3', 'D4', 'D4'] },
     { id: 'drop-c-sharp', instrument: 'guitar', name: 'Drop C# (C#F#BEG#C#)', notes: ['C#1', 'F#1', 'B1', 'E2', 'G#2', 'C#3'] },
     { id: 'drop-b', instrument: 'guitar', name: 'Drop B (BF#BEG#C#)', notes: ['B1', 'F#2', 'B2', 'E3', 'G#3', 'C#4'] },
     { id: 'drop-a', instrument: 'guitar', name: 'Drop A (AEADF#B)', notes: ['A1', 'E2', 'A2', 'D3', 'F#3', 'B3'] },

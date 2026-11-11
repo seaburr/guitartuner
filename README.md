@@ -16,6 +16,7 @@ through the microphone to show whether a string is sharp or flat.
   Drop C, DADGAD, D-G-C-G-C-D, Open G, Open D.
 - Guitar, desert rock and stoner/metal: DGDGDG (D2 G2 D3 G3 D4 G4), double drop D (DADGBD),
   drop C# (C#F#BEG#C#), drop B (BF#BEG#C#), drop A (AEADF#B).
+- Ggdgdd (QOTSA): G2 G2 D3 G3 D4 D4, read as typed, low to high.
 - Bass (4-string): standard EADG, drop D (DADG).
 - Ukulele: standard GCEA (re-entrant, G is the high string), low G (G3 C4 E4 A4).
 - Banjo (5-string): open G (gDGBD), double C (gCGBD).
@@ -106,6 +107,7 @@ for the Docker image.
 ## Assumptions
 
 - "DADGAG" in the brief was read as DADGAD, the common alternate tuning.
+- "Ggdgdd" was added as typed (G2 G2 D3 G3 D4 D4); the octaves are a guess. The tuning often cited for QOTSA is Ggdgbd.
 - Audio needs a user gesture in some browsers, so the first click or key press starts sound.
 - Tones are synthesized (triangle plus octave partial), not recorded samples.
 - Pitch detection is a simple autocorrelation: it works best with one string ringing at a time.

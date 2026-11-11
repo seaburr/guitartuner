@@ -90,6 +90,15 @@ test('every new preset is inside the supported range and within 6 strings', () =
   }
 });
 
+test('Ggdgdd (QOTSA) preset is present, six strings, valid notes', () => {
+  const t = Tunings.getTuning('ggdgdd');
+  assert.strictEqual(t.id, 'ggdgdd');
+  assert.strictEqual(t.instrument, 'guitar');
+  assert.deepStrictEqual(t.notes.map((n) => n.replace(/\d/g, '')), ['G', 'G', 'D', 'G', 'D', 'D']);
+  assert.strictEqual(t.notes.length, 6);
+  assert.strictEqual(Tunings.validateNotes(t.notes), null);
+});
+
 test('unknown tuning id falls back to standard', () => {
   assert.strictEqual(Tunings.getTuning('nope').id, 'standard');
 });
